@@ -2,15 +2,15 @@
 
 import sqlite3
 import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+from sys import argv
+from random import shuffle
 
 class KoboDB:
 
     def __init__(self, db_file):
         self.db_file = db_file
 
-    def get_highlights(self):
+    def get_highlights(self, reverse=False, random=False):
 
         db_file = self.db_file
 
@@ -22,15 +22,21 @@ class KoboDB:
         bookmarks = [highlights for highlights in cursor]
         count = 0
 
+        if reverse:
+            bookmarks.reverse()
+
+        if random:
+            shuffle(bookmarks)
+
         while count < len(bookmarks):
-            print('\n', bookmarks[count][2], '\n')
-            decide = input('Do you want to keep this bookmark (y/n/stop)? ')
+            print('\n', bookmarks[count][1], '\n\n', bookmarks[count][2], '\n')
+            decide = str(input('Do you want to keep this bookmark (y/n/stop)? '))
             if decide == 'n':
                 cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''', (bookmarks[count][0],))
                 count += 1
             elif decide == 'stop':
                 break
-            else:
+            elif decide == 'y':
                 count += 1
 
         # Do not delete!
@@ -41,6 +47,14 @@ class KoboDB:
 
 if __name__ == '__main__':
 
+    args = argv[1]
+
     kobo = KoboDB('KoboReader.sqlite')
-    kobo.get_highlights()
+
+    if args == 'reverse':
+        kobo.get_highlights(reverse=True)
+    if args == 'random':
+        kobo.get_highlights(random=True)
+    else:
+        kobo.get_highlights()
 
