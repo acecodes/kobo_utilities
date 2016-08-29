@@ -56,9 +56,9 @@ if __name__ == '__main__':
 
         if behavior_arg == 'reverse':
             KoboDB.get_highlights(sqlite_file, reverse=True)
-        if behavior_arg == 'random':
+        elif behavior_arg == 'random':
             KoboDB.get_highlights(sqlite_file, random=True)
-        if behavior_arg == 'get':
+        elif behavior_arg == 'get':
             get_decide = input('This will copy your Kobo\'s DB to disk. Are you sure you want to proceed? (y/n) ')
             if get_decide == 'y':
                 print('Copying your Kobo\'s SQLite file to this directory...')
@@ -66,7 +66,7 @@ if __name__ == '__main__':
                 print('Done copying.')
             else:
                 pass
-        if behavior_arg == 'push':
+        elif behavior_arg == 'push':
             push_decide = input('This will copy your local DB to your Kobo. Are you sure you want to proceed? (y/n) ')
             if push_decide == 'y':
                 print('Copying your local Kobo SQLite file to your Kobo...')
