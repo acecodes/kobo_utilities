@@ -52,6 +52,7 @@ if __name__ == '__main__':
     try:
         sqlite_file = 'KoboReader.sqlite'
         behavior_arg = argv[1]
+        behavior_arg = behavior_arg.lower()
 
         if behavior_arg == 'reverse':
             KoboDB.get_highlights(sqlite_file, reverse=True)
