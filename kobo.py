@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import sqlite3
-import os
+
 from sys import argv
 from random import shuffle
 
-class KoboDB:
 
+class KoboDB:
     def __init__(self, db_file):
         self.db_file = db_file
 
@@ -17,7 +17,7 @@ class KoboDB:
         db = sqlite3.connect(db_file)
         cursor = db.cursor()
 
-        cursor.execute('''select BookmarkID, VolumeID, Text, DateCreated from Bookmark WHERE Hidden IS NOT 'true';''')
+        cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true';''')
 
         bookmarks = [highlights for highlights in cursor]
         count = 0
@@ -32,7 +32,8 @@ class KoboDB:
             print('\n', bookmarks[count][1], '\n\n', bookmarks[count][2], '\n')
             decide = str(input('Do you want to keep this bookmark (y/n/stop)? '))
             if decide == 'n':
-                cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''', (bookmarks[count][0],))
+                cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''',
+                               (bookmarks[count][0],))
                 count += 1
             elif decide == 'stop':
                 break
@@ -45,16 +46,20 @@ class KoboDB:
         print('Closing connection to DB...')
         db.close()
 
-if __name__ == '__main__':
 
-    args = argv[1]
+if __name__ == '__main__':
 
     kobo = KoboDB('KoboReader.sqlite')
 
-    if args == 'reverse':
-        kobo.get_highlights(reverse=True)
-    if args == 'random':
-        kobo.get_highlights(random=True)
-    else:
-        kobo.get_highlights()
+    try:
+        args = argv[1]
 
+        if args == 'reverse':
+            kobo.get_highlights(reverse=True)
+        if args == 'random':
+            kobo.get_highlights(random=True)
+        else:
+            kobo.get_highlights()
+
+    except IndexError:
+        kobo.get_highlights()
