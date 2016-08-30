@@ -60,7 +60,7 @@ class KoboDB:
         if get_decide == 'y':
             print('Copying your Kobo\'s SQLite file to this directory...')
             copy2('/Volumes/KOBOeReader/.kobo/KoboReader.sqlite', BASE_DIR + '/KoboReader.sqlite')
-            print('Done copying.')
+            print('Done copying your Kobo\'s DB to this directory.')
         else:
             pass
 
