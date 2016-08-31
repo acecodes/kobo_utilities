@@ -19,6 +19,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class KoboDB:
     @staticmethod
     def get_highlights(db_file, reverse=False, random=False):
+        """
+        Extract and present the highlights from your Kobo SQLite file. Each highlight will present
+        the user with a choice: keep the highlight, remove it (set it to "hidden") or stop going through highlights.
+        Once "stop" is entered or the user reaches the end of their highlights, the DB is saved.
+
+        By default, highlights will be presented in first-last oder.
+
+        :param db_file: Kobo SQLite file. (string)
+        :param reverse: Show highlights in last-first order. (Boolean)
+        :param random: Show highlights in random order. (Boolean)
+        :return: None.
+        """
 
         db = sqlite3.connect(db_file)
         cursor = db.cursor()
@@ -26,7 +38,6 @@ class KoboDB:
         cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true';''')
 
         bookmarks = [highlights for highlights in cursor]
-        count = 0
 
         if reverse:
             bookmarks.reverse()
@@ -34,6 +45,7 @@ class KoboDB:
         if random:
             shuffle(bookmarks)
 
+        count = 0
         bookmarks_length = len(bookmarks)
 
         while count < bookmarks_length:
@@ -56,23 +68,31 @@ class KoboDB:
 
     @staticmethod
     def get_db():
+        """
+        Get the SQLite database from your Kobo device.
+        :return: None.
+        """
         get_decide = input('This will copy your Kobo\'s DB to disk. Are you sure you want to proceed? (y/n) ')
         if get_decide == 'y':
             print('Copying your Kobo\'s SQLite file to this directory...')
             copy2('/Volumes/KOBOeReader/.kobo/KoboReader.sqlite', BASE_DIR + '/KoboReader.sqlite')
             print('Done copying your Kobo\'s DB to this directory.')
         else:
-            pass
+            return
 
     @staticmethod
     def push_db():
+        """
+        Send your local version of the Kobo SQLite file to the device.
+        :return: None.
+        """
         push_decide = input('This will copy your local DB to your Kobo. Are you sure you want to proceed? (y/n) ')
         if push_decide == 'y':
             print('Copying your local Kobo SQLite file to your Kobo...')
             copy2(BASE_DIR + '/KoboReader.sqlite', '/Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
             print('Done copying SQLite file to your Kobo.')
         else:
-            pass
+            return
 
 
 if __name__ == '__main__':
