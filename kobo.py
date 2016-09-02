@@ -74,9 +74,12 @@ class KoboDB:
         """
         get_decide = input('This will copy your Kobo\'s DB to disk. Are you sure you want to proceed? (y/n) ')
         if get_decide == 'y':
-            print('Copying your Kobo\'s SQLite file to this directory...')
-            copy2('/Volumes/KOBOeReader/.kobo/KoboReader.sqlite', BASE_DIR + '/KoboReader.sqlite')
-            print('Done copying your Kobo\'s DB to this directory.')
+            try:
+                print('Copying your Kobo\'s SQLite file to this directory...')
+                copy2('/Volumes/KOBOeReader/.kobo/KoboReader.sqlite', BASE_DIR + '/KoboReader.sqlite')
+                print('Done copying your Kobo\'s DB to this directory.')
+            except FileNotFoundError:
+                print('Your Kobo does not appear to be connected. Please plug your Kobo in and try again.')
         else:
             return
 
@@ -88,9 +91,12 @@ class KoboDB:
         """
         push_decide = input('This will copy your local DB to your Kobo. Are you sure you want to proceed? (y/n) ')
         if push_decide == 'y':
-            print('Copying your local Kobo SQLite file to your Kobo...')
-            copy2(BASE_DIR + '/KoboReader.sqlite', '/Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
-            print('Done copying SQLite file to your Kobo.')
+            try:
+                print('Copying your local Kobo SQLite file to your Kobo...')
+                copy2(BASE_DIR + '/KoboReader.sqlite', '/Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
+                print('Done copying SQLite file to your Kobo.')
+            except FileNotFoundError:
+                print('Your Kobo does not appear to be connected. Please plug your Kobo in and try again.')
         else:
             return
 
