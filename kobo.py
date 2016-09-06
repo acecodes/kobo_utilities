@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class KoboDB:
     @staticmethod
-    def get_highlights(db_file, reverse=False, random=False):
+    def get_highlights(db_file, reverse=False, random=False, show_all=False):
         """
         Extract and present the highlights from your Kobo SQLite file. Each highlight will present
         the user with a choice: keep the highlight, remove it (set it to "hidden") or stop going through highlights.
@@ -38,6 +38,11 @@ class KoboDB:
         cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true';''')
 
         bookmarks = [highlights for highlights in cursor]
+
+        if show_all:
+            for mark in bookmarks:
+                print('\n {} \n\n {} \n'.format(mark[1], mark[2]))
+            return
 
         if reverse:
             bookmarks.reverse()
@@ -112,6 +117,8 @@ if __name__ == '__main__':
             KoboDB.get_highlights(sqlite_file, reverse=True)
         elif behavior_arg == 'random':
             KoboDB.get_highlights(sqlite_file, random=True)
+        elif behavior_arg == 'all':
+            KoboDB.get_highlights(sqlite_file, show_all=True)
         elif behavior_arg == 'get':
             KoboDB.get_db()
         elif behavior_arg == 'push':
