@@ -100,3 +100,6 @@ ENV/
 KoboReader*
 
 .idea/
+
+# Compressed files
+.zip

@@ -3,10 +3,13 @@ from __future__ import print_function
 
 import sqlite3
 import os
+import zipfile
+import datetime
 
 from sys import argv
 from random import shuffle
 from shutil import copy2
+
 
 # Backward compatibility
 try:
@@ -72,6 +75,15 @@ class KoboDB:
         db.close()
 
     @staticmethod
+    def backup_db():
+        now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
+        file_name = BASE_DIR + '/' + 'KoboDB_backup-{}'.format(now)
+        zf = zipfile.ZipFile("{}.zip".format(file_name), "w", zipfile.ZIP_DEFLATED)
+        zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backup/KoboReader.sqlite')
+        zf.close()
+
+
+    @staticmethod
     def get_db():
         """
         Get the SQLite database from your Kobo device.
@@ -123,6 +135,8 @@ if __name__ == '__main__':
             KoboDB.get_db()
         elif behavior_arg == 'push':
             KoboDB.push_db()
+        elif behavior_arg == 'backup':
+            KoboDB.backup_db()
 
     except IndexError:
         KoboDB.get_highlights(sqlite_file)
