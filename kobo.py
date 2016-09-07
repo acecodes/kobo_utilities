@@ -10,7 +10,6 @@ from sys import argv
 from random import shuffle
 from shutil import copy2
 
-
 # Backward compatibility
 try:
     input = raw_input
@@ -18,6 +17,7 @@ except NameError:
     pass
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class KoboDB:
     @staticmethod
@@ -82,10 +82,10 @@ class KoboDB:
         """
         now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
         file_name = BASE_DIR + '/Backups/' + 'KoboDB_backup-{}'.format(now)
+
         zf = zipfile.ZipFile("{}.zip".format(file_name), "w", zipfile.ZIP_DEFLATED)
         zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backup/KoboReader.sqlite')
         zf.close()
-
 
     @staticmethod
     def get_db():
