@@ -76,8 +76,12 @@ class KoboDB:
 
     @staticmethod
     def backup_db():
+        """
+        Compress your Kobo database file and save it to a backup folder.
+        :return: None
+        """
         now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
-        file_name = BASE_DIR + '/' + 'KoboDB_backup-{}'.format(now)
+        file_name = BASE_DIR + '/Backups/' + 'KoboDB_backup-{}'.format(now)
         zf = zipfile.ZipFile("{}.zip".format(file_name), "w", zipfile.ZIP_DEFLATED)
         zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backup/KoboReader.sqlite')
         zf.close()

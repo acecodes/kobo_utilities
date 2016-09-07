@@ -103,3 +103,6 @@ KoboReader*
 
 # Compressed files
 .zip
+
+# Backup folder
+Backups/
