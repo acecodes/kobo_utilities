@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
             reverse = True if len(argv) > 2 and argv[2] == 'reverse' else False
             random = True if len(argv) > 2 and argv[2] == 'random' else False
-            show_all = True if len(argv) > 2 and argv[2] == 'show_all' else False
+            show_all = True if len(argv) > 2 and argv[2] == 'all' else False
 
             operations[behavior_arg](sqlite_file,
                                      reverse=reverse,
