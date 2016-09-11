@@ -75,16 +75,20 @@ class KoboDB:
         db.close()
 
     @staticmethod
-    def backup_db():
+    def backup_db(output_dir=False):
         """
         Compress your Kobo database file and save it to a backup folder.
         :return: None
         """
+
+        if not output_dir:
+            output_dir = BASE_DIR + '/Backups/'
+
         now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
-        file_name = BASE_DIR + '/Backups/' + 'KoboDB_backup-{}'.format(now)
+        file_name = output_dir + 'KoboDB_backup-{}'.format(now)
 
         zf = zipfile.ZipFile("{}.zip".format(file_name), "w", zipfile.ZIP_DEFLATED)
-        zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backup/KoboReader.sqlite')
+        zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backups/KoboReader.sqlite')
         zf.close()
 
     @staticmethod
@@ -103,6 +107,31 @@ class KoboDB:
                 print('Your Kobo does not appear to be connected. Please plug your Kobo in and try again.')
         else:
             return
+
+    @staticmethod
+    def help():
+        print(
+            """
+            How to use:
+            ./kobo.py $command1 $command2
+
+            Second commands only apply to the "highlights" feature.
+
+            This program assumes you have a KoboReader.sqlite file in the same directory.
+
+            Available commands:
+
+            highlights - Get highlights, starting from the oldest highlight
+            highlights reverse - Get highlights, starting from the newest highlight
+            highlights random - Get highlights in random order
+            highlights all - Show all highlights in your DB
+
+            get - Pull the KoboReader.sqlite DB file from your connected reader
+            push - Send the local KoboReader.sqlite DB file to your connected reader
+            backup - Create a compressed backup of your DB file in the "Backup" directory
+            help - Show this screen again
+            """
+        )
 
     @staticmethod
     def push_db():
@@ -125,22 +154,30 @@ class KoboDB:
 if __name__ == '__main__':
 
     try:
-        sqlite_file = 'KoboReader.sqlite'
-        behavior_arg = argv[1]
-        behavior_arg = behavior_arg.lower()
+        behavior_arg = argv[1].lower()
 
-        if behavior_arg == 'reverse':
-            KoboDB.get_highlights(sqlite_file, reverse=True)
-        elif behavior_arg == 'random':
-            KoboDB.get_highlights(sqlite_file, random=True)
-        elif behavior_arg == 'all':
-            KoboDB.get_highlights(sqlite_file, show_all=True)
-        elif behavior_arg == 'get':
-            KoboDB.get_db()
-        elif behavior_arg == 'push':
-            KoboDB.push_db()
-        elif behavior_arg == 'backup':
-            KoboDB.backup_db()
+        operations = {
+            'highlights': KoboDB.get_highlights,
+            'get': KoboDB.get_db,
+            'push': KoboDB.push_db,
+            'backup': KoboDB.backup_db,
+            'help': KoboDB.help
+        }
 
-    except IndexError:
-        KoboDB.get_highlights(sqlite_file)
+        if behavior_arg == 'highlights':
+            sqlite_file = 'KoboReader.sqlite'
+
+            reverse = True if len(argv) > 2 and argv[2] == 'reverse' else False
+            random = True if len(argv) > 2 and argv[2] == 'random' else False
+            show_all = True if len(argv) > 2 and argv[2] == 'show_all' else False
+
+            operations[behavior_arg](sqlite_file,
+                                     reverse=reverse,
+                                     random=random,
+                                     show_all=show_all)
+        else:
+            operations[behavior_arg]()
+
+    except (KeyError) as e:
+        KoboDB.help()
+        print(e)

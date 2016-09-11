@@ -12,15 +12,17 @@ If you don't, you type `n` and it will switch the `Hidden` field in the database
 All you need to do to run the program is the place KoboReader.sqlite file that can be found on a Kobo reader within the .kobo directory into the same directory as the script. You can run the file within any arguments, which will present highlights from first to last. Or, you can add `reverse` or `random` to have last-first ordering or random ordering, respectively.
 
 ## MacOS X users:
-If you want to skip the hassle of manually copy-pasting the Kobo DB file, you can now use the `get` and `push` commands with this script. `get` will pull the DB from the device and place it in the directory you're running the script. `push` will send the `KoboReader.sqlite` file you have in your current directory to the device. This is only for MacOS users at the moment, although I may make it cross-platform later.
+If you want to skip the hassle of manually copy-pasting the Kobo DB file, you can now use the `get` and `push` commands with this script. `get` will pull the DB from the device and place it in the directory you're running the script. `push` will send the `KoboReader.sqlite` file you have in your current directory to the device. `backup` will create a compressed zip file backup of your DB. This is only for MacOS users at the moment, although I may make it cross-platform later.
 
 Sample usage (from the command line):
 
-    ~$ ./kobo.py
-    ~$ ./kobo.py random
-    ~$ ./kobo.py reverse
+    ~$ ./kobo.py highlights
+    ~$ ./kobo.py highlights random
+    ~$ ./kobo.py highlights reverse
     ~$ ./kobo.py get
     ~$ ./kobo.py push
+    ~$ ./kobo.py backup
+    ~$ ./kobo.py help
 
 Output looks like this:
 
