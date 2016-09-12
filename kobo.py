@@ -167,8 +167,8 @@ if __name__ == '__main__':
         if behavior_arg == 'highlights':
             sqlite_file = 'KoboReader.sqlite'
 
-            reverse = True if len(argv) > 2 and argv[2] == 'reverse' else False
-            random = True if len(argv) > 2 and argv[2] == 'random' else False
+            reverse = True if len(argv) > 2 and 'reverse' in argv else False
+            random = True if len(argv) > 2 and 'random' in argv else False
             show_all = True if len(argv) > 2 and argv[2] == 'all' else False
 
             operations[behavior_arg](sqlite_file,
@@ -180,4 +180,4 @@ if __name__ == '__main__':
 
     except (KeyError) as e:
         KoboDB.help()
-        print(e)
+        print('Error: {}'.format(e))
