@@ -11,8 +11,14 @@ If you don't, you type `n` and it will switch the `Hidden` field in the database
 
 All you need to do to run the program is the place KoboReader.sqlite file that can be found on a Kobo reader within the .kobo directory into the same directory as the script. You can run the file within any arguments, which will present highlights from first to last. Or, you can add `reverse` or `random` to have last-first ordering or random ordering, respectively.
 
-## MacOS X users:
+## Manipulating Highlights
 If you want to skip the hassle of manually copy-pasting the Kobo DB file, you can now use the `get` and `push` commands with this script. `get` will pull the DB from the device and place it in the directory you're running the script. `push` will send the `KoboReader.sqlite` file you have in your current directory to the device. `backup` will create a compressed zip file backup of your DB. This is only for MacOS users at the moment, although I may make it cross-platform later.
+
+## Environment Variables
+
+If you want to change which file you manipulate with the `highlights` command, change the `KOBO_DB` environment variable (default is `KoboReader.sqlite`).
+
+If you want to change where the program looks for your Kobo reader's DB file once it's plugged in via USB, change the `KOBO_READER` environment variable (defaults to `/Volumes/KOBOeReader/.kobo/KoboReader.sqlite`, which is where it appears in Mac OS X).
 
 Sample usage (from the command line):
 
@@ -32,4 +38,4 @@ Output looks like this:
     
     Do you want to keep this bookmark (y/n/stop)?
 
-This process will continue until you type `stop` and press Enter. Once you do that, changes will be committed to the DB and the connection to the DB will be closed.
+This process will continue until you type `stop` and press Enter. Once you do that, changes will be committed to the DB and the connection to the DB will be closed. Any changes made before typing `stop` will not be saved.

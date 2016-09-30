@@ -16,6 +16,19 @@ try:
 except NameError:
     pass
 
+# The file you want to use for the 'highlights' series of commands
+if 'KOBO_DB' not in os.environ:
+    KOBO_DB = 'KoboReader.sqlite'
+else:
+    KOBO_DB = os.environ['KOBO_DB']
+
+# The path to your Kobo reader's SQLite file once plugged in via USB
+if 'KOBO_READER' not in os.environ:
+    # Defaults to Mac OS X location
+    KOBO_READER = '/Volumes/KOBOeReader/.kobo/KoboReader.sqlite'
+else:
+    KOBO_READER = os.environ['KOBO_READER']
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -101,7 +114,7 @@ class KoboDB:
         if get_decide == 'y':
             try:
                 print('Copying your Kobo\'s SQLite file to this directory...')
-                copy2('/Volumes/KOBOeReader/.kobo/KoboReader.sqlite', BASE_DIR + '/KoboReader.sqlite')
+                copy2(KOBO_READER, BASE_DIR + '/KoboReader.sqlite')
                 print('Done copying your Kobo\'s DB to this directory.')
             except FileNotFoundError:
                 print('Your Kobo does not appear to be connected. Please plug your Kobo in and try again.')
@@ -130,7 +143,15 @@ class KoboDB:
             push - Send the local KoboReader.sqlite DB file to your connected reader
             backup - Create a compressed backup of your DB file in the "Backup" directory
             help - Show this screen again
-            """
+
+            Environment variables:
+
+            $KOBO_DB - The file you want to use for the 'highlights' series of commands
+            Default: {KOBO_DB}
+
+            $KOBO_READER - The path to your Kobo reader's SQLite file once plugged in via USB
+            Default: {KOBO_READER}
+            """.format(KOBO_DB=KOBO_DB, KOBO_READER=KOBO_READER)
         )
 
     @staticmethod
@@ -143,7 +164,7 @@ class KoboDB:
         if push_decide == 'y':
             try:
                 print('Copying your local Kobo SQLite file to your Kobo...')
-                copy2(BASE_DIR + '/KoboReader.sqlite', '/Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
+                copy2(BASE_DIR + '/KoboReader.sqlite', KOBO_READER)
                 print('Done copying SQLite file to your Kobo.')
             except FileNotFoundError:
                 print('Your Kobo does not appear to be connected. Please plug your Kobo in and try again.')
@@ -165,7 +186,7 @@ if __name__ == '__main__':
         }
 
         if behavior_arg == 'highlights':
-            sqlite_file = 'KoboReader.sqlite'
+            sqlite_file = KOBO_DB
 
             reverse = True if len(argv) > 2 and 'reverse' in argv else False
             random = True if len(argv) > 2 and 'random' in argv else False
