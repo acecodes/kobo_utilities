@@ -5,10 +5,12 @@ import sqlite3
 import os
 import zipfile
 import datetime
+import time
 
 from sys import argv
 from random import shuffle
 from shutil import copy2
+
 
 # Backward compatibility
 try:
@@ -91,6 +93,7 @@ class KoboDB:
     def backup_db(output_dir=False):
         """
         Compress your Kobo database file and save it to a backup folder.
+        :param: output_dir: Where you want your backup file to go. Default is ./Backups/
         :return: None
         """
 
@@ -100,9 +103,11 @@ class KoboDB:
         now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
         file_name = output_dir + 'KoboDB_backup-{}'.format(now)
 
+        print('Backing up your Kobo DB to the following location:\n{}.zip...'.format(file_name))
         zf = zipfile.ZipFile("{}.zip".format(file_name), "w", zipfile.ZIP_DEFLATED)
         zf.write(BASE_DIR + '/' + 'KoboReader.sqlite', 'Backups/KoboReader.sqlite')
         zf.close()
+        print('Finished backing up your Kobo DB.')
 
     @staticmethod
     def get_db():
@@ -175,6 +180,8 @@ class KoboDB:
 if __name__ == '__main__':
 
     try:
+        start = time.perf_counter()
+
         behavior_arg = argv[1].lower()
 
         operations = {
@@ -198,6 +205,11 @@ if __name__ == '__main__':
                                      show_all=show_all)
         else:
             operations[behavior_arg]()
+
+        end = time.perf_counter()
+
+        if 'debug' in argv:
+            print('Execution time: {}'.format(end - start))
 
     except (KeyError) as e:
         KoboDB.help()
