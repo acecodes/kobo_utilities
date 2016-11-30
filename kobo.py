@@ -36,7 +36,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class KoboDB:
     @staticmethod
-    def get_highlights(db_file, reverse=False, random=False, show_all=False, in_order=False):
+    def get_highlights(db_file, reverse=False, random=False, show_all=False, grouped=False):
         """
         Extract and present the highlights from your Kobo SQLite file. Each highlight will present
         the user with a choice: keep the highlight, remove it (set it to "hidden") or stop going through highlights.
@@ -53,7 +53,7 @@ class KoboDB:
         db = sqlite3.connect(db_file)
         cursor = db.cursor()
 
-        if not in_order:
+        if not grouped:
             cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true';''')
         else:
             cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true' ORDER BY VolumeID;''')
@@ -201,13 +201,13 @@ if __name__ == '__main__':
             reverse = True if len(argv) > 2 and 'reverse' in argv else False
             random = True if len(argv) > 2 and 'random' in argv else False
             show_all = True if len(argv) > 2 and argv[2] == 'all' else False
-            in_order = True if len(argv) > 2 and 'ordered' in argv else False
+            grouped = True if len(argv) > 2 and 'group' in argv else False
 
             operations[behavior_arg](sqlite_file,
                                      reverse=reverse,
                                      random=random,
                                      show_all=show_all,
-                                     in_order=in_order)
+                                     grouped=grouped)
         else:
             operations[behavior_arg]()
 
