@@ -36,7 +36,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class KoboDB:
     @staticmethod
-    def get_highlights(db_file, reverse=False, random=False, show_all=False, grouped=False):
+    def get_highlights(db_file, reverse=False, random=False, 
+        show_all=False, grouped=False, half=False, custom_start=False):
         """
         Extract and present the highlights from your Kobo SQLite file. Each highlight will present
         the user with a choice: keep the highlight, remove it (set it to "hidden") or stop going through highlights.
@@ -74,8 +75,15 @@ class KoboDB:
         count = 0
         bookmarks_length = len(bookmarks)
 
+        if half:
+            count = int(bookmarks_length / 2)
+
+        if custom_start:
+            count = custom_start
+
         while count < bookmarks_length:
-            print('\n', bookmarks[count][1], '\n\n', bookmarks[count][2], '\n')
+            print('\n Highlight number {} \n'.format(count))
+            print(bookmarks[count][1], '\n\n', bookmarks[count][2], '\n')
             decide = str(input('Do you want to keep this bookmark (y/n/stop)? '))
             if decide == 'n':
                 cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''',
@@ -145,7 +153,9 @@ class KoboDB:
             highlights - Get highlights, starting from the oldest highlight
             highlights reverse - Get highlights, starting from the newest highlight
             highlights random - Get highlights in random order
+            highlights half - Get highlights from the halfway point (can be combined with reverse)
             highlights all - Show all highlights in your DB
+            highlights [number] - Start from highlight number N (must be LAST command)
 
             get - Pull the KoboReader.sqlite DB file from your connected reader
             push - Send the local KoboReader.sqlite DB file to your connected reader
@@ -192,8 +202,16 @@ if __name__ == '__main__':
             'get': KoboDB.get_db,
             'push': KoboDB.push_db,
             'backup': KoboDB.backup_db,
-            'help': KoboDB.help
+            'help': KoboDB.help,
         }
+
+        try:
+            if type(int(argv[-1])) == int:
+                custom_start_num = int(argv[-1])
+            else:
+                custom_start_num = False
+        except ValueError:
+            custom_start_num = False
 
         if behavior_arg == 'highlights':
             sqlite_file = KOBO_DB
@@ -202,12 +220,16 @@ if __name__ == '__main__':
             random = True if len(argv) > 2 and 'random' in argv else False
             show_all = True if len(argv) > 2 and argv[2] == 'all' else False
             grouped = True if len(argv) > 2 and 'group' in argv else False
+            half = True if len(argv) > 2 and 'half' in argv else False
+            custom_start = custom_start_num
 
             operations[behavior_arg](sqlite_file,
                                      reverse=reverse,
                                      random=random,
                                      show_all=show_all,
-                                     grouped=grouped)
+                                     grouped=grouped,
+                                     half=half,
+                                     custom_start=custom_start)
         else:
             operations[behavior_arg]()
 
