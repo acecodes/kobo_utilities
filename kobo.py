@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from argparse import ArgumentParser
 
 import sqlite3
 import os
@@ -37,7 +38,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class KoboDB:
     @staticmethod
     def get_highlights(db_file, reverse=False, random=False, 
-        show_all=False, grouped=False, half=False, custom_start=False):
+        show_all=False, grouped=False, half=False, custom_start=False,
+        delete=False):
         """
         Extract and present the highlights from your Kobo SQLite file. Each highlight will present
         the user with a choice: keep the highlight, remove it (set it to "hidden") or stop going through highlights.
@@ -60,6 +62,21 @@ class KoboDB:
             cursor.execute('''SELECT BookmarkID, VolumeID, Text, DateCreated FROM Bookmark WHERE Hidden IS NOT 'true' ORDER BY VolumeID;''')
 
         bookmarks = [highlights for highlights in cursor]
+
+        if delete:
+            if type(delete) == int:
+                content = '\n {} \n {} \n'.format(bookmarks[delete][1], bookmarks[delete][2])
+                cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''',
+                                   (bookmarks[delete][0],))
+                print('Highlight number {} deleted (technically, hidden).'.format(delete))
+                print('\n Content of deleted (hidden) highlight: {}'.format(content))
+            
+            # Do not delete!
+            print('Commiting changes to the DB...')
+            db.commit()
+            print('Closing connection to DB...')
+            db.close()
+            return
 
         if show_all:
             mark_num = 0
@@ -159,6 +176,8 @@ class KoboDB:
             highlights all - Show all highlights in your DB
             highlights [number] - Start from highlight number N (must be LAST command)
 
+            highlights delete [number] - Delete (hide) highlight number N
+
             get - Pull the KoboReader.sqlite DB file from your connected reader
             push - Send the local KoboReader.sqlite DB file to your connected reader
             backup - Create a compressed backup of your DB file in the "Backup" directory
@@ -215,6 +234,14 @@ if __name__ == '__main__':
         except ValueError:
             custom_start_num = False
 
+        delete_num = False
+
+        try:
+            if type(int(argv[-1])) == int and 'delete' in argv:
+                delete_num = int(argv[-1])
+        except ValueError:
+            pass
+
         if behavior_arg == 'highlights':
             sqlite_file = KOBO_DB
 
@@ -224,6 +251,7 @@ if __name__ == '__main__':
             grouped = True if len(argv) > 2 and 'group' in argv else False
             half = True if len(argv) > 2 and 'half' in argv else False
             custom_start = custom_start_num
+            delete = delete_num
 
             operations[behavior_arg](sqlite_file,
                                      reverse=reverse,
@@ -231,7 +259,8 @@ if __name__ == '__main__':
                                      show_all=show_all,
                                      grouped=grouped,
                                      half=half,
-                                     custom_start=custom_start)
+                                     custom_start=custom_start,
+                                     delete=delete_num)
         else:
             operations[behavior_arg]()
 
