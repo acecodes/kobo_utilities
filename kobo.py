@@ -62,8 +62,10 @@ class KoboDB:
         bookmarks = [highlights for highlights in cursor]
 
         if show_all:
+            mark_num = 0
             for mark in bookmarks:
-                print('\n {} \n\n {} \n'.format(mark[1], mark[2]))
+                print('\n Highlight number: {} \n {} \n\n {} \n'.format(mark_num, mark[1], mark[2]))
+                mark_num += 1
             return
 
         if reverse:
