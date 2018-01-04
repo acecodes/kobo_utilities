@@ -246,18 +246,19 @@ if __name__ == '__main__':
 
         delete_num = False
 
-        
-
         if behavior_arg == 'highlights':
 
-            if argv[2] == 'delete':
-                delete_num = True
-            else:
-                try:
-                    if type(int(argv[-1])) == int and 'delete' in argv:
-                        delete_num = int(argv[-1])
-                except ValueError:
-                    pass
+            try:
+                if argv[2] == 'delete':
+                    delete_num = True
+                else:
+                    try:
+                        if type(int(argv[-1])) == int and 'delete' in argv:
+                            delete_num = int(argv[-1])
+                    except ValueError:
+                        pass
+            except IndexError:
+                pass
 
             sqlite_file = KOBO_DB
 
