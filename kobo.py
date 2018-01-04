@@ -75,8 +75,7 @@ class KoboDB:
                 remove_these_highlights = [int(i) for i in input('\nPlease enter the numbers (separated by commas) of all the highlights you would like to remove (hide):\n').split(',')]
                 for hi in remove_these_highlights:
                     content = '\n {} \n {} \n'.format(bookmarks[hi][1], bookmarks[hi][2])
-                    print('Hi test:', hi)
-                    print('List test:', remove_these_highlights)
+                    print('Highlight number:', hi)
                     cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''',
                                    (bookmarks[hi][0],))
                     print('Highlight number {} deleted (technically, hidden).'.format(hi))
