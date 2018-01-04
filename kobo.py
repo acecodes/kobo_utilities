@@ -70,6 +70,17 @@ class KoboDB:
                                    (bookmarks[delete][0],))
                 print('Highlight number {} deleted (technically, hidden).'.format(delete))
                 print('\n Content of deleted (hidden) highlight: {}'.format(content))
+
+            elif type(delete) == bool and delete == True:
+                remove_these_highlights = [int(i) for i in input('\nPlease enter the numbers (separated by commas) of all the highlights you would like to remove (hide):\n').split(',')]
+                for hi in remove_these_highlights:
+                    content = '\n {} \n {} \n'.format(bookmarks[hi][1], bookmarks[hi][2])
+                    print('Hi test:', hi)
+                    print('List test:', remove_these_highlights)
+                    cursor.execute('''UPDATE "main"."Bookmark" SET "Hidden" = "true" WHERE  "BookmarkID" = ?''',
+                                   (bookmarks[hi][0],))
+                    print('Highlight number {} deleted (technically, hidden).'.format(hi))
+                    print('\n Content of deleted (hidden) highlight: {}'.format(content))
             
             # Do not delete!
             print('Commiting changes to the DB...')
@@ -236,13 +247,19 @@ if __name__ == '__main__':
 
         delete_num = False
 
-        try:
-            if type(int(argv[-1])) == int and 'delete' in argv:
-                delete_num = int(argv[-1])
-        except ValueError:
-            pass
+        
 
         if behavior_arg == 'highlights':
+
+            if argv[2] == 'delete':
+                delete_num = True
+            else:
+                try:
+                    if type(int(argv[-1])) == int and 'delete' in argv:
+                        delete_num = int(argv[-1])
+                except ValueError:
+                    pass
+
             sqlite_file = KOBO_DB
 
             reverse = True if len(argv) > 2 and 'reverse' in argv else False
